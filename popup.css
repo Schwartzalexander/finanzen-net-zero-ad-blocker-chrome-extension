@@ -1,0 +1,44 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-width: 260px;
+  background: #f4f8f3;
+  color: #143326;
+}
+
+.popup {
+  padding: 18px;
+}
+
+.icon {
+  display: block;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.status {
+  display: inline-block;
+  margin: 2px 0 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #dff2df;
+  color: #0b6b38;
+  font-weight: 700;
+}

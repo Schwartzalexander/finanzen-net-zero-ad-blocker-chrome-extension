@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="finanzen.net zero Werbeentferner">
+  <rect width="128" height="128" rx="28" fill="#0b6b38"/>
+  <path d="M28 40c0-7 5-12 12-12h48c7 0 12 5 12 12v48c0 7-5 12-12 12H40c-7 0-12-5-12-12V40Z" fill="#f4f8f3"/>
+  <path d="M43 65h42" stroke="#0b6b38" stroke-width="12" stroke-linecap="round"/>
+  <path d="M86 34 34 86" stroke="#e34b4b" stroke-width="12" stroke-linecap="round"/>
+  <path d="M42 43h44v12H42zM42 73h28v12H42z" fill="#0b6b38" opacity=".28"/>
+</svg>

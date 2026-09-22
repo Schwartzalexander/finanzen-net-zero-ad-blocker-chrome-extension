@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "finanzen.net zero Werbeentferner",
+  "description": "Klickt finanzen.net zero Hinweise automatisch auf 'Nicht mehr anzeigen' und schliesst sie.",
+  "version": "1.0.0",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "finanzen.net zero Werbeentferner",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://finanzen.net/*",
+        "https://*.finanzen.net/*",
+        "https://finanzen-zero.net/*",
+        "https://*.finanzen-zero.net/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
