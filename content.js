@@ -41,6 +41,10 @@
     return uniqueElements([label, customCheckbox, checkbox, labelText]);
   }
 
+  function getCheckbox(notification) {
+    return notification.querySelector('web-design-system-checkbox[data-zid="user-note-checkbox"] input[type="checkbox"], input[type="checkbox"]');
+  }
+
   function getCloseTargets(notification) {
     const closeIcon = notification.querySelector('web-design-system-icon.close-icon[name="cross"], web-design-system-icon[name="cross"], .close-icon');
     const svg = closeIcon?.querySelector("svg");
@@ -48,14 +52,38 @@
     return uniqueElements([closeIcon, svg]);
   }
 
-  function clickFirstWorkingTarget(targets) {
-    for (const target of targets) {
-      clickOnce(target);
+  function clickPreferredTarget(targets) {
+    if (targets[0]) {
+      clickOnce(targets[0]);
     }
   }
 
+  function setCheckboxChecked(checkbox) {
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "checked");
+
+    descriptor?.set?.call(checkbox, true);
+    checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+    checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function ensureDoNotShowAgain(notification) {
+    const checkbox = getCheckbox(notification);
+
+    if (!checkbox || checkbox.checked) {
+      return Boolean(checkbox?.checked);
+    }
+
+    clickPreferredTarget(getCheckboxTargets(notification));
+
+    if (!checkbox.checked) {
+      setCheckboxChecked(checkbox);
+    }
+
+    return checkbox.checked;
+  }
+
   function closeNotification(notification) {
-    clickFirstWorkingTarget(getCloseTargets(notification));
+    clickPreferredTarget(getCloseTargets(notification));
   }
 
   function processNotification(notification) {
@@ -71,19 +99,20 @@
 
     closeAttempts.set(notification, attempts + 1);
 
-    const checkbox = notification.querySelector('input[type="checkbox"]');
-
-    if (checkbox && !checkbox.checked) {
-      clickFirstWorkingTarget(getCheckboxTargets(notification));
-    }
+    const isDoNotShowAgainChecked = ensureDoNotShowAgain(notification);
 
     window.setTimeout(() => {
+      if (!isDoNotShowAgainChecked && !ensureDoNotShowAgain(notification)) {
+        window.setTimeout(() => processNotification(notification), 300);
+        return;
+      }
+
       closeNotification(notification);
 
       if (notification.isConnected) {
-        window.setTimeout(() => processNotification(notification), 300);
+        window.setTimeout(() => processNotification(notification), 700);
       }
-    }, 250);
+    }, 900);
   }
 
   function processNotifications(root) {
