@@ -9,13 +9,20 @@
     const scope = root instanceof Element ? root : document;
     const candidates = [];
 
-    if (scope.matches?.(".notification")) {
+    if (scope.matches?.(".notification, web-components-user-notes, [data-zid=\"user-note-checkbox\"]")) {
       candidates.push(scope);
     }
 
-    candidates.push(...scope.querySelectorAll?.(".notification") || []);
+    candidates.push(...scope.querySelectorAll?.(".notification, web-components-user-notes, [data-zid=\"user-note-checkbox\"]") || []);
 
-    return candidates.filter((notification) => getCheckboxTargets(notification).length > 0 && getCloseTargets(notification).length > 0);
+    const notifications = candidates.map((candidate) => {
+      if (candidate.matches("[data-zid=\"user-note-checkbox\"]")) {
+        return candidate.closest("web-components-user-notes") || candidate.closest("zero-info-block") || candidate.parentElement;
+      }
+      return candidate;
+    });
+
+    return uniqueElements(notifications).filter((notification) => getCheckboxTargets(notification).length > 0 && getCloseTargets(notification).length > 0);
   }
 
   function clickOnce(element) {
@@ -31,8 +38,8 @@
   }
 
   function getCheckboxTargets(notification) {
-    const checkbox = notification.querySelector('web-design-system-checkbox[data-zid="user-note-checkbox"] input[type="checkbox"], input[type="checkbox"]');
-    const customCheckbox = checkbox?.closest("web-design-system-checkbox");
+    const checkbox = notification.querySelector('[data-zid="user-note-checkbox"] input[type="checkbox"], input[type="checkbox"]');
+    const customCheckbox = checkbox?.closest('[data-zid="user-note-checkbox"]');
     const label = checkbox?.closest("label");
     const labelText = [...notification.querySelectorAll("label, span")].find((element) => {
       return element.textContent?.trim().toLowerCase() === "nicht mehr anzeigen";
@@ -42,14 +49,14 @@
   }
 
   function getCheckbox(notification) {
-    return notification.querySelector('web-design-system-checkbox[data-zid="user-note-checkbox"] input[type="checkbox"], input[type="checkbox"]');
+    return notification.querySelector('[data-zid="user-note-checkbox"] input[type="checkbox"], input[type="checkbox"]');
   }
 
   function getCloseTargets(notification) {
-    const closeIcon = notification.querySelector('web-design-system-icon.close-icon[name="cross"], web-design-system-icon[name="cross"], .close-icon');
-    const svg = closeIcon?.querySelector("svg");
+    const closeButton = notification.querySelector('[data-zid="info-block-close"] button[data-zid="zero-icon-button"], [data-zid="info-block-close"] button, web-design-system-icon.close-icon[name="cross"], web-design-system-icon[name="cross"], .close-icon, button[aria-label*="schließen" i], button[aria-label*="close" i]');
+    const svg = closeButton?.querySelector("svg");
 
-    return uniqueElements([closeIcon, svg]);
+    return uniqueElements([closeButton, svg]);
   }
 
   function clickPreferredTarget(targets) {
@@ -83,6 +90,13 @@
   }
 
   function closeNotification(notification) {
+    const closeButton = notification.querySelector('[data-zid="info-block-close"] button[data-zid="zero-icon-button"], [data-zid="info-block-close"] button');
+
+    if (closeButton) {
+      closeButton.click();
+      return;
+    }
+
     clickPreferredTarget(getCloseTargets(notification));
   }
 
